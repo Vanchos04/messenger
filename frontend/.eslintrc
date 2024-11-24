@@ -27,6 +27,10 @@
     }
   },
   "rules": {
+    "semi": [
+      "warn",
+      "never"
+    ],
     "no-unused-vars": [
       "error",
       {
