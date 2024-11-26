@@ -1,20 +1,20 @@
-import { Controller, Delete, Get, Param, Patch } from '@nestjs/common';
-import { UsersService } from '@users/users.service';
+import { Controller, Delete, Get, Param, Patch } from "@nestjs/common";
+import { UsersService } from "./users.service";
 
-@Controller('users')
+@Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get('/')
+  @Get("/")
   getAll() {
     return this.usersService.getAll();
   }
 
   @Patch()
-  editUser(@Param('id') userId: number) {
+  editUser(@Param("id") userId: number) {
     return this.usersService.editUser(userId);
   }
 
-  @Delete(':id')
-  deleteUser(@Param('id') userId: number) {}
+  @Delete(":id")
+  deleteUser(@Param("id") userId: number) {}
 }
