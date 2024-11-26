@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common'
-import * as bcrypt from 'bcrypt'
-import { PrismaService } from '../prisma/prisma.service'
-import { JwtService } from '@nestjs/jwt'
+import { Injectable } from "@nestjs/common";
+import * as bcrypt from "bcrypt";
+import { PrismaService } from "../prisma/prisma.service";
+import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class AuthService {
@@ -54,7 +54,7 @@ export class AuthService {
     const token = await this.signToken(newUser.id.toString());
 
     return {
-      message:'User created successfully'",
+      message: "User created successfully",
       token,
     };
   }
@@ -65,19 +65,19 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new Error('User not found')
+      throw new Error("User not found");
     }
 
     const passwordValid = await this.validatePassword(password, user.hash);
 
     if (!passwordValid) {
-      throw new Error('Invalid credentials')
+      throw new Error("Invalid credentials");
     }
 
     const token = await this.signToken(user.id.toString());
 
     return {
-      message: 'Sign-in successful',
+      message: "Sign-in successful",
       token,
     };
   }
