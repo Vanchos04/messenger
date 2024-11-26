@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
-import { PrismaService } from '@prisma/prisma.service';
-import { JwtService } from '@nestjs/jwt';
+import { Injectable } from '@nestjs/common'
+import * as bcrypt from 'bcrypt'
+import { PrismaService } from '../prisma/prisma.service'
+import { JwtService } from '@nestjs/jwt'
 
 @Injectable()
 export class AuthService {
@@ -31,13 +31,13 @@ export class AuthService {
     password: string,
     firstName?: string,
     lastName?: string,
-  ): Promise<any> {
+  ) {
     const existingUser = await this.prisma.user.findUnique({
       where: { email },
     });
 
     if (existingUser) {
-      throw new Error('User with this email already exists');
+      throw new Error("User with this email already exists");
     }
 
     const hashedPassword = await this.hashPassword(password);
@@ -54,24 +54,24 @@ export class AuthService {
     const token = await this.signToken(newUser.id.toString());
 
     return {
-      message: 'User created successfully',
+      message:'User created successfully'",
       token,
     };
   }
 
-  async signin(email: string, password: string): Promise<any> {
+  async signin(email: string, password: string) {
     const user = await this.prisma.user.findUnique({
       where: { email },
     });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new Error('User not found')
     }
 
     const passwordValid = await this.validatePassword(password, user.hash);
 
     if (!passwordValid) {
-      throw new Error('Invalid credentials');
+      throw new Error('Invalid credentials')
     }
 
     const token = await this.signToken(user.id.toString());

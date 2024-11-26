@@ -7,14 +7,8 @@
     "**/*spec.ts"
   ],
   "paths": {
-    "@prisma/*": [
-      "src/prisma/*"
-    ],
-    "@users/*": [
-      "src/users/*"
-    ],
-    "@auth/*": [
-      "src/auth/*"
+    "@/*": [
+      "src/*"
     ]
   }
 }
