@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '@prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly prisma: PrismaService, // Inject PrismaService
-    private readonly jwtService: JwtService, // Inject JwtService
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async hashPassword(password: string): Promise<string> {
