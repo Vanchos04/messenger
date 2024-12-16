@@ -1,32 +1,56 @@
-import { z } from 'zod'
-import { useForm, SubmitHandler } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-
-const SignUpSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(3).max(20),
-})
-type SignUpSchemaType = z.infer<typeof SignUpSchema>
+import { signUpSchema, SignUpSchemaType } from '@/schemas/signup.ts'
+import { useZodForm } from '@/hooks/useZodForm'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx'
+import { Input } from '@/components/ui/input.tsx'
+import { Button } from '@/components/ui/button.tsx'
 
 export function RegisterPage() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignUpSchemaType>({ resolver: zodResolver(SignUpSchema) })
+  const form = useZodForm(signUpSchema)
 
-  const onSubmit: SubmitHandler<SignUpSchemaType> = (data) => console.log(data)
+  const handleFormSubmit = (data: SignUpSchemaType) => {
+    console.log('Form Data:', data)
+  }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="form">
-      <input className="input" placeholder="email" {...register('email')} />
-      {errors.email && <span>{errors.email.message}</span>}
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Your email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-      <input className="input" placeholder="password" {...register('password')} />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="Your password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-      {errors.password && <span>{errors.password.message}</span>}
-
-      <button type="submit">submit!</button>
-    </form>
+            <Button type="submit" className="w-full">
+              Submit
+            </Button>
+          </form>
+        </Form>
+      </div>
+    </div>
   )
 }
