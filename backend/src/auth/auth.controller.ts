@@ -1,20 +1,31 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  HttpCode,
+  NotFoundException,
+  Post,
+  UnauthorizedException,
+  UseGuards,
+} from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthDto } from "./dto/auth.dto";
+import { JwtAuthGuard } from "@/auth/guards/jwt.guard";
+import { LocalAuthGuard } from "@/auth/guards/local.guard";
 
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @HttpCode(200)
   @Post("signup")
   async signup(@Body() authDto: AuthDto) {
-    const { email, password, firstName, lastName } = authDto;
-    return this.authService.signup(email, password, firstName, lastName);
+    return this.authService.signup(authDto);
   }
 
+  @HttpCode(200)
   @Post("signin")
   async signin(@Body() authDto: AuthDto) {
-    const { email, password } = authDto;
-    return this.authService.signin(email, password);
+    return this.authService.signin(authDto);
   }
 }
