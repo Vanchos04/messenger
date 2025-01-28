@@ -4,14 +4,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import axios from 'axios'
-import { toast } from 'sonner'
+import { toast, Toaster } from 'sonner'
 
 export function LoginPage() {
   const form = useZodForm(signInSchema)
 
   const handleFormSubmit = async (data: SignInSchemaType) => {
     try {
-      const response = await axios.post('/auth/chatpage', data)
+      const response = await axios.post('http://localhost:3000/auth/signin', data)
       const { token } = response.data
 
       localStorage.setItem('token', token)
@@ -29,21 +29,8 @@ export function LoginPage() {
       <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
         <Form {...form}>
+          <Toaster />
           <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input type="username" placeholder="Your username" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <FormField
               control={form.control}
               name="email"

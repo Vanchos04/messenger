@@ -1,6 +1,17 @@
-import { Routes } from 'react-router'
-import { authRouter } from '../auth/router.tsx'
+import { Route, Routes } from 'react-router'
+import { AuthLayout } from '@/auth/Layout.tsx'
+import { LoginPage } from '@/pages/LoginPage.tsx'
+import RegisterPage from '@/pages/RegisterPage.tsx'
+import { ChatPage } from '@/pages/ChatPage.tsx'
 
 export function Router() {
-  return <Routes>{authRouter}</Routes>
+  return (
+    <Routes>
+      <Route path="auth" element={<AuthLayout />}>
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
+        <Route path="chatpage" element={<ChatPage />} />
+      </Route>
+    </Routes>
+  )
 }

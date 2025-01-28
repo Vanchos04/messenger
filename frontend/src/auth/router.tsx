@@ -1,7 +1,7 @@
 import { Route } from 'react-router'
 import { AuthLayout } from './Layout.tsx'
 import { LoginPage } from '@/pages/LoginPage.tsx'
-import { RegisterPage } from '@/pages/RegisterPage.tsx'
+import RegisterPage from '@/pages/RegisterPage.tsx'
 import { ChatPage } from '@/pages/ChatPage.tsx'
 
 export const authRouter = (

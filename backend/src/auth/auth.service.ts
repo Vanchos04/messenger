@@ -8,7 +8,8 @@ import { PrismaService } from "../prisma/prisma.service";
 import { JwtService } from "@nestjs/jwt";
 import { User } from "prisma";
 import * as jwt from "jsonwebtoken";
-import { AuthDto } from "@/auth/dto/auth.dto";
+import { RegisterDto } from "@/auth/dto/register.dto";
+import { LoginDto } from "@/auth/dto/login.dto";
 
 @Injectable()
 export class AuthService {
@@ -22,7 +23,7 @@ export class AuthService {
     return bcrypt.hash(password, saltRounds);
   }
 
-  async signup(authDto: AuthDto) {
+  async signup(authDto: RegisterDto) {
     const { email, password, username } = authDto;
     console.log(authDto);
     const existingUser = await this.prisma.user.findUnique({
@@ -60,7 +61,7 @@ export class AuthService {
     });
   }
 
-  async signin(authDto: AuthDto) {
+  async signin(authDto: LoginDto) {
     const { email, password } = authDto;
     console.log(authDto);
     const user = await this.prisma.user.findUnique({
