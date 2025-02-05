@@ -2,7 +2,6 @@ import { Module } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthController } from "./auth.controller";
 import { JwtModule } from "@nestjs/jwt";
-import { LocalStrategy } from "./strategy/local.strategy";
 import { JwtStrategy } from "./strategy/jwt.strategy";
 import { PrismaService } from "../prisma/prisma.service";
 import { ConfigModule, ConfigService } from "@nestjs/config";
@@ -14,11 +13,12 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get("JWT_SECRET"),
+        signOptions: { expiresIn: "1h" },
       }),
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, PrismaService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, PrismaService, JwtStrategy],
   controllers: [AuthController],
 })
 export class AuthModule {}

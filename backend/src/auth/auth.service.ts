@@ -1,7 +1,15 @@
-import { Injectable } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from "@nestjs/common";
 import * as bcrypt from "bcrypt";
 import { PrismaService } from "../prisma/prisma.service";
 import { JwtService } from "@nestjs/jwt";
+import { User } from "prisma";
+import * as jwt from "jsonwebtoken";
+import { RegisterDto } from "@/auth/dto/register.dto";
+import { LoginDto } from "@/auth/dto/login.dto";
 
 @Injectable()
 export class AuthService {
@@ -15,23 +23,9 @@ export class AuthService {
     return bcrypt.hash(password, saltRounds);
   }
 
-  async validatePassword(
-    plainPassword: string,
-    hashedPassword: string,
-  ): Promise<boolean> {
-    return bcrypt.compare(plainPassword, hashedPassword);
-  }
-
-  async signToken(userId: string): Promise<string> {
-    return this.jwtService.signAsync({ userId });
-  }
-
-  async signup(
-    email: string,
-    password: string,
-    firstName?: string,
-    lastName?: string,
-  ) {
+  async signup(authDto: RegisterDto) {
+    const { email, password, username } = authDto;
+    console.log(authDto);
     const existingUser = await this.prisma.user.findUnique({
       where: { email },
     });
@@ -46,8 +40,7 @@ export class AuthService {
       data: {
         email,
         hash: hashedPassword,
-        firstName,
-        lastName,
+        username,
       },
     });
 
@@ -56,29 +49,74 @@ export class AuthService {
     return {
       message: "User created successfully",
       token,
+      id: newUser.id,
+      email: newUser.email,
+      username: newUser.username,
     };
   }
 
-  async signin(email: string, password: string) {
+  async findUserByEmail(email: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { email },
+    });
+  }
+
+  async signin(authDto: LoginDto) {
+    const { email, password } = authDto;
+    console.log(authDto);
     const user = await this.prisma.user.findUnique({
       where: { email },
     });
 
     if (!user) {
-      throw new Error("User not found");
+      throw new NotFoundException("User not found");
     }
 
     const passwordValid = await this.validatePassword(password, user.hash);
 
     if (!passwordValid) {
-      throw new Error("Invalid credentials");
+      throw new UnauthorizedException("Invalid credentials");
     }
 
-    const token = await this.signToken(user.id.toString());
+    let token: string;
+    try {
+      token = await this.signToken(user.id.toString());
+    } catch (error) {
+      throw new UnauthorizedException("Error generating token");
+    }
 
     return {
       message: "Sign-in successful",
       token,
     };
+  }
+
+  private async validatePassword(
+    password: string,
+    hash: string,
+  ): Promise<boolean> {
+    return bcrypt.compare(password, hash);
+  }
+
+  private async signToken(userId: string): Promise<string> {
+    const secretKey = process.env.JWT_SECRET || "defaultSecret";
+    const token = jwt.sign({ userId }, secretKey, { expiresIn: "1h" });
+    return token;
+  }
+
+  async validateUser(email: string, password: string): Promise<User | null> {
+    const user = await this.findUserByEmail(email);
+
+    if (!user) {
+      return null;
+    }
+
+    const passwordValid = await this.validatePassword(password, user.hash);
+
+    if (!passwordValid) {
+      return null;
+    }
+
+    return user;
   }
 }

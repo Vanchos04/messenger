@@ -1,10 +1,17 @@
-import { Global, Module } from "@nestjs/common";
+import { forwardRef, Global, Module } from "@nestjs/common";
 import { PrismaService } from "./prisma.service";
-import { ConfigService } from "@nestjs/config";
+import { ConfigModule } from "@nestjs/config";
+import { UsersModule } from "@/users/users.module";
 
 @Global()
 @Module({
-  providers: [PrismaService, ConfigService],
-  exports: [PrismaService, ConfigService],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    forwardRef(() => UsersModule),
+  ],
+  providers: [PrismaService],
+  exports: [PrismaService],
 })
 export class PrismaModule {}
