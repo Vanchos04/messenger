@@ -2,7 +2,7 @@ import { Input } from '@/components/ui/input.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx'
 import { signUpSchema, SignUpSchemaType } from '@/schemas/signup.ts'
-import { toast, Toaster } from 'sonner'
+import { toast } from 'sonner'
 import { useNavigate } from 'react-router'
 import axios from 'axios'
 import { useZodForm } from '@/hooks/useZodForm.ts'
@@ -47,7 +47,6 @@ export default function RegisterPage() {
       <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
         <Form {...form}>
-          <Toaster />
           <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
             <FormField
               control={form.control}

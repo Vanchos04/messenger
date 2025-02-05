@@ -4,7 +4,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input.tsx'
 import { Button } from '@/components/ui/button.tsx'
 import axios from 'axios'
-import { toast, Toaster } from 'sonner'
+import { toast } from 'sonner'
 
 export function LoginPage() {
   const form = useZodForm(signInSchema)
@@ -29,7 +29,6 @@ export function LoginPage() {
       <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl font-bold text-center mb-6">Login</h2>
         <Form {...form}>
-          <Toaster />
           <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
             <FormField
               control={form.control}
