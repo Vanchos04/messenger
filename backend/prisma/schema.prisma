@@ -15,4 +15,82 @@ model User {
   email    String @unique
   hash     String
   username String
+
+  chatsAsUser      Chat[]        @relation("UserChats")
+  chatsAsPartner   Chat[]        @relation("PartnerChats")
+  messagesSent     Message[]     @relation("MessagesFrom")
+  messagesReceived Message[]     @relation("MessagesTo")
+  Group            Group[]
+  GroupMember      GroupMember[]
+}
+
+model Chat {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId          Int
+  directPartnerId Int
+  type            ChatType
+
+  user          User      @relation("UserChats", fields: [userId], references: [id])
+  directPartner User      @relation("PartnerChats", fields: [directPartnerId], references: [id])
+  messages      Message[]
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  fromId  Int
+  toId    Int
+  chatId  Int
+  type    MessageType
+  content String
+  replyTo Int?
+
+  from    User   @relation("MessagesFrom", fields: [fromId], references: [id])
+  to      User   @relation("MessagesTo", fields: [toId], references: [id])
+  chat    Chat   @relation(fields: [chatId], references: [id])
+  Group   Group? @relation(fields: [groupId], references: [id])
+  groupId Int?
+}
+
+enum ChatType {
+  DIRECT
+  GROUP
+}
+
+enum MessageType {
+  TEXT
+  VOICE
+  IMAGE
+  GIF
+  EMOJI
+}
+
+model Group {
+  id        Int      @id @default(autoincrement())
+  name      String
+  info      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  creatorId Int
+  creator   User @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  members  GroupMember[]
+  messages Message[]
+}
+
+model GroupMember {
+  id      Int @id @default(autoincrement())
+  userId  Int
+  groupId Int
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, groupId])
 }
