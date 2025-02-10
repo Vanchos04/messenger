@@ -63,7 +63,7 @@ export class UsersController {
   }
 
   @Get("search")
-  searchUsers(@Query("q") query: string) {
+  searchUsers(@Query("user") query: string) {
     return this.usersService.searchUsers(query);
   }
 }

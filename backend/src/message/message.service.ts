@@ -18,10 +18,8 @@ export class MessageService {
     return this.prisma.message.create({
       data: {
         fromId: dto.fromId,
-        toId: dto.toId,
         chatId: dto.chatId,
         type: dto.type,
-        content: dto.content,
         replyTo: dto.replyTo ?? null,
       },
     });
@@ -30,7 +28,7 @@ export class MessageService {
   async getChatMessages(chatId: number) {
     return this.prisma.message.findMany({
       where: { chatId },
-      include: { from: true, to: true },
+      include: { from: true },
     });
   }
 }

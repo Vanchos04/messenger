@@ -16,12 +16,11 @@ model User {
   hash     String
   username String
 
-  chatsAsUser      Chat[]        @relation("UserChats")
-  chatsAsPartner   Chat[]        @relation("PartnerChats")
-  messagesSent     Message[]     @relation("MessagesFrom")
-  messagesReceived Message[]     @relation("MessagesTo")
-  Group            Group[]
-  GroupMember      GroupMember[]
+  chatsAsUser    Chat[]        @relation("UserChats")
+  chatsAsPartner Chat[]        @relation("PartnerChats")
+  messagesSent   Message[]     @relation("MessagesFrom")
+  Group          Group[]
+  GroupMember    GroupMember[]
 }
 
 model Chat {
@@ -44,17 +43,15 @@ model Message {
   updatedAt DateTime @updatedAt
 
   fromId  Int
-  toId    Int
   chatId  Int
   type    MessageType
-  content String
   replyTo Int?
 
-  from    User   @relation("MessagesFrom", fields: [fromId], references: [id])
-  to      User   @relation("MessagesTo", fields: [toId], references: [id])
-  chat    Chat   @relation(fields: [chatId], references: [id])
-  Group   Group? @relation(fields: [groupId], references: [id])
-  groupId Int?
+  from User @relation("MessagesFrom", fields: [fromId], references: [id])
+  chat Chat @relation(fields: [chatId], references: [id])
+
+  repliedTo Message?  @relation("ReplyMessages", fields: [replyTo], references: [id])
+  replies   Message[] @relation("ReplyMessages")
 }
 
 enum ChatType {
@@ -80,8 +77,7 @@ model Group {
   creatorId Int
   creator   User @relation(fields: [creatorId], references: [id], onDelete: Cascade)
 
-  members  GroupMember[]
-  messages Message[]
+  members GroupMember[]
 }
 
 model GroupMember {
