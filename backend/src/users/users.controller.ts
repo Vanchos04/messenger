@@ -8,6 +8,7 @@ import {
   Post,
   NotFoundException,
   UseGuards,
+  Query,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { JwtAuthGuard } from "@/auth/guards/jwt.guard";
@@ -59,5 +60,10 @@ export class UsersController {
       createUserData.username,
       createUserData.password,
     );
+  }
+
+  @Get("search")
+  searchUsers(@Query("user") query: string) {
+    return this.usersService.searchUsers(query);
   }
 }

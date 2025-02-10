@@ -68,4 +68,15 @@ export class UsersService {
     const salt = await bcrypt.genSalt();
     return bcrypt.hash(password, salt);
   }
+
+  async searchUsers(query: string) {
+    return this.prisma.user.findMany({
+      where: {
+        OR: [
+          { username: { contains: query, mode: "insensitive" } },
+          { email: { contains: query, mode: "insensitive" } },
+        ],
+      },
+    });
+  }
 }

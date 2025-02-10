@@ -15,4 +15,78 @@ model User {
   email    String @unique
   hash     String
   username String
+
+  chatsAsUser    Chat[]        @relation("UserChats")
+  chatsAsPartner Chat[]        @relation("PartnerChats")
+  messagesSent   Message[]     @relation("MessagesFrom")
+  Group          Group[]
+  GroupMember    GroupMember[]
+}
+
+model Chat {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId          Int
+  directPartnerId Int
+  type            ChatType
+
+  user          User      @relation("UserChats", fields: [userId], references: [id])
+  directPartner User      @relation("PartnerChats", fields: [directPartnerId], references: [id])
+  messages      Message[]
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  fromId  Int
+  chatId  Int
+  type    MessageType
+  replyTo Int?
+
+  from User @relation("MessagesFrom", fields: [fromId], references: [id])
+  chat Chat @relation(fields: [chatId], references: [id])
+
+  repliedTo Message?  @relation("ReplyMessages", fields: [replyTo], references: [id])
+  replies   Message[] @relation("ReplyMessages")
+}
+
+enum ChatType {
+  DIRECT
+  GROUP
+}
+
+enum MessageType {
+  TEXT
+  VOICE
+  IMAGE
+  GIF
+  EMOJI
+}
+
+model Group {
+  id        Int      @id @default(autoincrement())
+  name      String
+  info      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  creatorId Int
+  creator   User @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  members GroupMember[]
+}
+
+model GroupMember {
+  id      Int @id @default(autoincrement())
+  userId  Int
+  groupId Int
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, groupId])
 }
