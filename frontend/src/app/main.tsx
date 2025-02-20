@@ -10,6 +10,7 @@ import RegisterPage from '@/pages/RegisterPage.tsx'
 import { ChatPage } from '@/pages/ChatPage.tsx'
 import { ProtectedRoute } from '@/router/ProtectedRoute.tsx'
 import { Toaster } from '@/components/ui/sonner.tsx'
+import { UserListPage } from '@/pages/UserListPage.tsx'
 
 const queryClient = new QueryClient()
 function isAuthenticated() {
@@ -40,6 +41,14 @@ createRoot(document.getElementById('root')!).render(
               element={
                 <ProtectedRoute isAuthenticated={isAuthenticated()}>
                   <ChatPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/userspage"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated()}>
+                  <UserListPage />
                 </ProtectedRoute>
               }
             />
