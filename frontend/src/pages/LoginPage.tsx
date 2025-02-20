@@ -12,9 +12,12 @@ export function LoginPage() {
   const handleFormSubmit = async (data: SignInSchemaType) => {
     try {
       const response = await axios.post('http://localhost:3000/auth/signin', data)
-      const { token } = response.data
+      const { token, id } = response.data
 
       localStorage.setItem('token', token)
+      localStorage.setItem('userId', id.toString()) // ✅ Store `userId`
+
+      console.log('Stored userId:', localStorage.getItem('userId'))
 
       toast.success('Login successful!')
       window.location.href = '/chatpage'

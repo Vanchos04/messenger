@@ -79,4 +79,17 @@ export class UsersService {
       },
     });
   }
+
+  async getAllUsersExcept(userId: number) {
+    return this.prisma.user.findMany({
+      where: {
+        id: { not: userId },
+      },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+      },
+    });
+  }
 }
