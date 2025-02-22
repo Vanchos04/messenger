@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "@/prisma/prisma.service";
 import { CreateChatDto } from "./dto/create-chat.dto";
 
@@ -7,6 +7,20 @@ export class ChatService {
   constructor(private prisma: PrismaService) {}
 
   async createChat(dto: CreateChatDto) {
+    const existingChat = await this.prisma.chat.findFirst({
+      where: {
+        OR: [
+          { userId: dto.userId, directPartnerId: dto.directPartnerId },
+          { userId: dto.directPartnerId, directPartnerId: dto.userId },
+        ],
+        type: dto.type,
+      },
+    });
+
+    if (existingChat) {
+      throw new BadRequestException("Chat between these users already exists");
+    }
+
     return this.prisma.chat.create({
       data: {
         userId: dto.userId,

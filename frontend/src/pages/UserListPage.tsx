@@ -27,8 +27,13 @@ export function UserListPage() {
   })
 
   const hasChatWithUser = (userId: number) => {
-    return chats?.some((chat: any) => Array.isArray(chat.participants) && chat.participants.includes(userId))
+    return chats?.some(
+      (chat: any) =>
+        (chat.userId === currentUserId && chat.directPartnerId === userId) ||
+        (chat.userId === userId && chat.directPartnerId === currentUserId),
+    )
   }
+
   const [filteredUsers, setFilteredUsers] = useState<User[]>([])
 
   useEffect(() => {
@@ -39,7 +44,11 @@ export function UserListPage() {
   }, [users, currentUserId])
 
   const getChatWithUser = (userId: number) => {
-    return chats.find((chat: any) => Array.isArray(chat.participants) && chat.participants.includes(userId))
+    return chats.find(
+      (chat: any) =>
+        (chat.userId === currentUserId && chat.directPartnerId === userId) ||
+        (chat.userId === userId && chat.directPartnerId === currentUserId),
+    )
   }
 
   const createChatMutation = useMutation({
@@ -78,7 +87,7 @@ export function UserListPage() {
                   </div>
 
                   {hasChat ? (
-                    <MessageSquare className="text-blue-500 cursor-pointer" onClick={() => handleChatClick(user.id)} />
+                    <MessageSquare className="text-black-500 cursor-pointer" onClick={() => handleChatClick(user.id)} />
                   ) : (
                     <UserPlus className="text-black-500 cursor-pointer" onClick={() => handleChatClick(user.id)} />
                   )}
