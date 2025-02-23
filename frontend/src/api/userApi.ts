@@ -19,7 +19,6 @@ export const fetchUserChats = async (userId: number) => {
 }
 
 export const createChat = async (userId1: number, userId2: number) => {
-  console.log('Creating chat with:', { userId1, userId2 })
   const response = await api.post('/chats/create-chat', {
     userId: userId1,
     directPartnerId: userId2,
