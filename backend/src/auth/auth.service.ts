@@ -88,6 +88,9 @@ export class AuthService {
     return {
       message: "Sign-in successful",
       token,
+      id: user.id,
+      email: user.email,
+      username: user.username,
     };
   }
 

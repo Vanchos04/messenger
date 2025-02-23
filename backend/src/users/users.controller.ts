@@ -9,11 +9,12 @@ import {
   NotFoundException,
   UseGuards,
   Query,
+  ParseIntPipe,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { JwtAuthGuard } from "@/auth/guards/jwt.guard";
 
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 @Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -24,7 +25,7 @@ export class UsersController {
   }
 
   @Get("/:id")
-  async getUserById(@Param("id") userId: number) {
+  async getUserById(@Param("id", ParseIntPipe) userId: number) {
     const user = await this.usersService.getUserById(userId);
     if (!user) {
       throw new NotFoundException("User not found");
@@ -65,5 +66,10 @@ export class UsersController {
   @Get("search")
   searchUsers(@Query("user") query: string) {
     return this.usersService.searchUsers(query);
+  }
+
+  @Get("/")
+  getAllUsers(@Query("userId") userId: string) {
+    return this.usersService.getAllUsersExcept(Number(userId));
   }
 }
