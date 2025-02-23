@@ -15,12 +15,12 @@ export function LoginPage() {
       const { token, id } = response.data
 
       localStorage.setItem('token', token)
-      localStorage.setItem('userId', id.toString()) // ✅ Store `userId`
+      localStorage.setItem('userId', id.toString())
 
       console.log('Stored userId:', localStorage.getItem('userId'))
 
       toast.success('Login successful!')
-      window.location.href = '/chatpage'
+      window.location.href = '/userspage'
     } catch (error) {
       console.error('Login failed:', error)
       toast.error('Invalid credentials')

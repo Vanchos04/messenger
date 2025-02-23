@@ -1,9 +1,23 @@
 import axios from 'axios'
-import { Chat } from '@/components/ChatList.tsx'
 
-const api = axios.create({ baseURL: 'http://localhost:3000' })
+export const fetchMessages = async (chatId: number) => {
+  const response = await axios.get(`http://localhost:3000/messages/${chatId}`)
+  return response.data
+}
 
-export const fetchChats = async (): Promise<Chat[]> => {
-  const response = await api('/chats/1')
+export const sendMessage = async (
+  chatId: number,
+  fromId: number,
+  text: string,
+  type: string = 'text',
+  replyTo?: number,
+) => {
+  const response = await axios.post(`http://localhost:3000/messages`, {
+    chatId,
+    fromId,
+    type,
+    replyTo: replyTo ?? null,
+  })
+
   return response.data
 }

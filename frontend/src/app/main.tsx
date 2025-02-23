@@ -7,10 +7,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthLayout } from '@/auth/Layout.tsx'
 import { LoginPage } from '@/pages/LoginPage.tsx'
 import RegisterPage from '@/pages/RegisterPage.tsx'
-import { ChatPage } from '@/pages/ChatPage.tsx'
 import { ProtectedRoute } from '@/router/ProtectedRoute.tsx'
 import { Toaster } from '@/components/ui/sonner.tsx'
 import { UserListPage } from '@/pages/UserListPage.tsx'
+import { ChatPage } from '@/pages/ChatPage.tsx'
 
 const queryClient = new QueryClient()
 function isAuthenticated() {
@@ -37,18 +37,18 @@ createRoot(document.getElementById('root')!).render(
               <Route path="register" element={<RegisterPage />} />
             </Route>
             <Route
-              path="/chatpage"
-              element={
-                <ProtectedRoute isAuthenticated={isAuthenticated()}>
-                  <ChatPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
               path="/userspage"
               element={
                 <ProtectedRoute isAuthenticated={isAuthenticated()}>
                   <UserListPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/chat/:chatId"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated()}>
+                  <ChatPage />
                 </ProtectedRoute>
               }
             />
