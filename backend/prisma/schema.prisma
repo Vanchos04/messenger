@@ -8,50 +8,65 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  email    String @unique
-  hash     String
-  username String
-
-  chatsAsUser    Chat[]        @relation("UserChats")
+  id             Int           @id @default(autoincrement())
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  email          String        @unique
+  hash           String
+  username       String
   chatsAsPartner Chat[]        @relation("PartnerChats")
-  messagesSent   Message[]     @relation("MessagesFrom")
+  chatsAsUser    Chat[]        @relation("UserChats")
   Group          Group[]
   GroupMember    GroupMember[]
+  messagesSent   Message[]     @relation("MessagesFrom")
 }
 
 model Chat {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  id              Int       @id @default(autoincrement())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
   userId          Int
   directPartnerId Int
   type            ChatType
-
-  user          User      @relation("UserChats", fields: [userId], references: [id])
-  directPartner User      @relation("PartnerChats", fields: [directPartnerId], references: [id])
-  messages      Message[]
+  directPartner   User      @relation("PartnerChats", fields: [directPartnerId], references: [id])
+  user            User      @relation("UserChats", fields: [userId], references: [id])
+  messages        Message[]
 }
 
 model Message {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        Int         @id @default(autoincrement())
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  fromId    Int
+  chatId    Int
+  type      MessageType
+  content   String
+  replyTo   Int?
+  chat      Chat        @relation(fields: [chatId], references: [id])
+  from      User        @relation("MessagesFrom", fields: [fromId], references: [id])
+  repliedTo Message?    @relation("ReplyMessages", fields: [replyTo], references: [id])
+  replies   Message[]   @relation("ReplyMessages")
+}
 
-  fromId  Int
-  chatId  Int
-  type    MessageType
-  replyTo Int?
+model Group {
+  id        Int           @id @default(autoincrement())
+  name      String
+  info      String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  creatorId Int
+  creator   User          @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  members   GroupMember[]
+}
 
-  from User @relation("MessagesFrom", fields: [fromId], references: [id])
-  chat Chat @relation(fields: [chatId], references: [id])
+model GroupMember {
+  id      Int   @id @default(autoincrement())
+  userId  Int
+  groupId Int
+  group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  repliedTo Message?  @relation("ReplyMessages", fields: [replyTo], references: [id])
-  replies   Message[] @relation("ReplyMessages")
+  @@unique([userId, groupId])
 }
 
 enum ChatType {
@@ -65,28 +80,4 @@ enum MessageType {
   IMAGE
   GIF
   EMOJI
-}
-
-model Group {
-  id        Int      @id @default(autoincrement())
-  name      String
-  info      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  creatorId Int
-  creator   User @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-
-  members GroupMember[]
-}
-
-model GroupMember {
-  id      Int @id @default(autoincrement())
-  userId  Int
-  groupId Int
-
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, groupId])
 }

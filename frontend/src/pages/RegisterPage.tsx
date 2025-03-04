@@ -32,7 +32,7 @@ export default function RegisterPage() {
     onSuccess: (data) => {
       localStorage.setItem('token', data.token)
       toast('Registration successful!')
-      navigate('/chatpage')
+      navigate('/userspage')
     },
     onError: () => {
       toast.error('Registration failed. Please try again.')

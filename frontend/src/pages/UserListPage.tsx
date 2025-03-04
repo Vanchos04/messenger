@@ -54,8 +54,14 @@ export function UserListPage() {
   const createChatMutation = useMutation({
     mutationFn: (userId: number) => createChat(currentUserId, userId),
     onSuccess: (newChat) => {
-      queryClient.invalidateQueries({ queryKey: ['chats', currentUserId] })
-      navigate(`/chat/${newChat.id}`)
+      console.log('New Chat ID:', newChat?.id)
+      if (newChat?.id) {
+        queryClient.invalidateQueries({ queryKey: ['chats', currentUserId] })
+        localStorage.setItem('chatId', String(newChat.id))
+        navigate(`/chat/${newChat.id}`)
+      } else {
+        console.error('Error: newChat.id is undefined')
+      }
     },
   })
 
@@ -65,7 +71,7 @@ export function UserListPage() {
     if (existingChat) {
       navigate(`/chat/${existingChat.id}`)
     } else {
-      createChatMutation.mutate(userId) // Create new chat
+      createChatMutation.mutate(userId)
     }
   }
 

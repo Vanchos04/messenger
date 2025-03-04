@@ -6,9 +6,6 @@ export class CreateMessageDto {
   fromId: number;
 
   @IsInt()
-  toId: number;
-
-  @IsInt()
   chatId: number;
 
   @IsEnum(MessageType)
