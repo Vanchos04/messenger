@@ -21,13 +21,16 @@ export class ChatService {
       throw new BadRequestException("Chat between these users already exists");
     }
 
-    return this.prisma.chat.create({
+    const newChat = await this.prisma.chat.create({
       data: {
         userId: dto.userId,
         directPartnerId: dto.directPartnerId,
         type: dto.type,
       },
     });
+
+    console.log("Created Chat:", newChat); // Debugging log
+    return newChat;
   }
 
   async getUserChats(userId: number) {

@@ -24,5 +24,7 @@ export const createChat = async (userId1: number, userId2: number) => {
     directPartnerId: userId2,
     type: 'DIRECT',
   })
+
+  console.log('API Response:', response.data)
   return response.data
 }
