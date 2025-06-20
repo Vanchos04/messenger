@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsInt, IsOptional, IsString, IsUrl } from "class-validator";
 import { MessageType } from "@prisma/client";
 
 export class CreateMessageDto {
@@ -12,7 +12,12 @@ export class CreateMessageDto {
   type: MessageType;
 
   @IsString()
-  content: string;
+  @IsOptional()
+  content?: string; // For text content
+
+  @IsUrl()
+  @IsOptional()
+  imageUrl?: string; // For image URLs (added for file-based messages)
 
   @IsOptional()
   @IsInt()

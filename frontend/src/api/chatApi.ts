@@ -10,7 +10,22 @@ export enum MessageType {
   EMOJI = 'EMOJI',
 }
 
-export const sendMessage = async (chatId: number, fromId: number, content: string, type: MessageType) => {
+interface MessagePayload {
+  chatId: number
+  fromId: number
+  content: string
+  type: MessageType
+}
+
+/**
+ * Send a text message
+ */
+export const sendMessage = async (
+  chatId: number,
+  fromId: number,
+  content: string,
+  type: MessageType = MessageType.TEXT,
+) => {
   try {
     const response = await axios.post(API_URL, {
       chatId,
@@ -25,6 +40,30 @@ export const sendMessage = async (chatId: number, fromId: number, content: strin
   }
 }
 
+/**
+ * Send an image message
+ */
+export const sendImageMessage = async (chatId: number, fromId: number, file: File) => {
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('chatId', chatId.toString())
+  formData.append('fromId', fromId.toString())
+  formData.append('type', MessageType.IMAGE) // Ensures the backend knows it's an image
+
+  try {
+    const response = await axios.post(`${API_URL}/upload`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error sending image message:', error)
+    throw error
+  }
+}
+
+/**
+ * Fetch all messages for a chat
+ */
 export async function fetchMessages(chatId: number) {
   try {
     const response = await axios.get(`${API_URL}/${chatId}`)
